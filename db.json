@@ -1,0 +1,58 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Alice",
+      "email": "alice@example.com",
+      "password": "123456"
+    },
+    {
+      "id": 2,
+      "name": "Bob",
+      "email": "bob@example.com",
+      "password": "123456"
+    },
+    {
+      "id": 3,
+      "name": "Lê Minh Hiếu",
+      "email": "chiencon2k454534@gmail.com",
+      "password": "$2a$10$4avHfd4bqKoQwiG.kVpD3.uafV4vvqH/bEVE9UXJ1Plf6WAMsrXJO"
+    },
+    {
+      "email": "leminsadk@gmail.com",
+      "password": "$2a$10$VYu3T7v1Lk86Ucb.c6nXGeuJgCqfJpHRKTH8LqEPosOXsYLXikzDW",
+      "name": "123123",
+      "id": 4
+    },
+    {
+      "email": "lemink894563@gmail.com",
+      "password": "$2a$10$W2BjAKDHtTYSnkpvzugQf./MQTYwakaczRVcoN0AREEwPWeJq0Kk2",
+      "name": "hieu1",
+      "confirmPassword": "123123",
+      "id": 5
+    },
+    {
+      "email": "Tkchiencon2k4@gmail.com",
+      "password": "$2a$10$Ys99veeYgArtkXlT2obxvu3dh8BHXnjikvdpxazu4Yz3nPHxxMVHe",
+      "name": "123123",
+      "confirmPassword": "123123",
+      "id": 6
+    }
+  ],
+  "products": [
+    {
+      "name": "Product A",
+      "price": 500000,
+      "description": "hieu dep trai",
+      "category": "dien thoai",
+      "id": 1
+    },
+    {
+      "id": 2,
+      "name": "Product B",
+      "price": 49.99,
+      "description": "des produc b",
+      "category": "laptop"
+    }
+  ]
+}
