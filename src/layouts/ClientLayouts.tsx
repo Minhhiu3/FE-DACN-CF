@@ -1,5 +1,4 @@
 import React from 'react'
-import styled from '@emotion/styled';
 import { Outlet } from 'react-router-dom';
 import Header from '../pages/client/common/ClientHeader';
 import Footer from '../pages/client/common/ClientFooter';
