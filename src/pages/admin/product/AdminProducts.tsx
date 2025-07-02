@@ -1,4 +1,4 @@
-import { useProductList } from "../../hooks/useProductList";
+import { useProductList } from "../../../hooks/useProductList";
 import { Link } from "react-router-dom";
 import { Table, Button, Container } from "react-bootstrap";
 const AdminProducts = () => {

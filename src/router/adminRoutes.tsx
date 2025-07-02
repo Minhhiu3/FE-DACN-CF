@@ -1,6 +1,6 @@
 // products & categories file layout
-import AdminProducts from '../pages/admin/AdminProducts';
-import ProductFormAdd from '../pages/admin/ProductFormAdd';
+import AdminProducts from '../pages/admin/product/AdminProducts';
+import ProductFormAdd from '../pages/admin/product/ProductFormAdd';
 import AdminOrders from '../pages/admin/AdminOrders';
 import AdminCategories from '../pages/admin/category/AdminCategories';
 import CategoryFormAdd from '../pages/admin/category/CategorieFormAdd';

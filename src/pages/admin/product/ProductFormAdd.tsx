@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { productSchema } from "../../validations/productSchema";
-import * as api from "../../api/productApi";
+import { productSchema } from "../../../validations/productSchema";
+import * as api from "../../../api/productApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { Col, Container, Row, Form, Button } from "react-bootstrap";
-import type { productType } from "../../types/productType";
+import type { productType } from "../../../types/productType";
 
 
 const ProductFormAdd = () => {
