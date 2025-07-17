@@ -5,6 +5,7 @@ const AdminProducts = () => {
     const { products, loading, removeProduct } = useProductList();
 
     if (loading) return <p>Đang tải...</p>;
+    console.log("Products:", products);
 
     return (
         <Container className="mt-4">
@@ -19,38 +20,45 @@ const AdminProducts = () => {
                 <Table striped bordered hover responsive>
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>#</th>
                             <th>Tên sản phẩm</th>
-                            <th>Giá ($)</th>
+                            <th>Giá (VNĐ)</th>
+                            <th>Thương hiệu</th>
+                            <th>Danh mục con</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
                         {products.map((p, index) => (
-                            <tr key={p.id}>
+                            <tr key={p._id}>
                                 <td>{index + 1}</td>
-                                <td>{p.name}</td>
-                                <td>{p.price}</td>
+                                <td>{p.title}</td>
+                                <td>{p.priceDefault?.toLocaleString()}</td>
+                                <td>{p.brand?.title || "Không rõ"}</td>
+                                <td>{p.subCategory?.title || "Không rõ"}</td>
                                 <td>
                                     <Button
                                         variant="danger"
                                         size="sm"
                                         className="me-2"
                                         onClick={() => {
-                                            if (p.id !== undefined) removeProduct(p.id);
+                                            if (p._id) removeProduct(p._id);
                                         }}
                                     >
                                         Xoá
                                     </Button>
                                     <Link
-                                        to={`/admin/products/${p.id}`}
-                                        className="btn btn-primary btn-sm"
+                                        to={`/admin/products/${p._id}`}
+                                        className="btn btn-primary btn-sm me-2"
                                     >
                                         Sửa
                                     </Link>
                                     <Link
-                                        to={`/admin/product/${p.id}`}
-                                    >Detail</Link>
+                                        to={`/admin/product/${p._id}`}
+                                        className="btn btn-secondary btn-sm"
+                                    >
+                                        Chi tiết
+                                    </Link>
                                 </td>
                             </tr>
                         ))}
@@ -62,6 +70,5 @@ const AdminProducts = () => {
         </Container>
     );
 };
-
 
 export default AdminProducts;

@@ -1,108 +1,163 @@
-import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { productSchema } from "../../../validations/productSchema";
-import * as api from "../../../api/productApi";
-import { useNavigate, useParams } from "react-router-dom";
-import { Col, Container, Row, Form, Button } from "react-bootstrap";
-import type { productType } from "../../../types/productType";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getBrand } from "../../../api/brandApi";
+import { getSubCategories } from "../../../api/categoryApi";
+import { createProduct } from "../../../api/productApi";
+import type { ProductType } from "../../../types/productType";
+import { Form, Button } from "react-bootstrap";
+import type { brandType } from "../../../types/brandType";
+import type { SubCategoryType } from "../../../types/categoryType";
+import slugify from "slugify";
+import { toast } from "react-toastify";
 
+export default function ProductFormAdd() {
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<ProductType>();
 
-const ProductFormAdd = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const isEdit = !!id;
-    const categories = [
-        'Laptop',
-        'dien thoai',
-        'linh kien'
-    ]
+  const [brands, setBrands] = useState<brandType[]>([]);
+  const [subCategories, setSubCategories] = useState<SubCategoryType[]>([]);
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
 
-    const {
-        register,
-        handleSubmit,
-        reset,
-        formState: { errors }
-    } = useForm({
-        resolver: zodResolver(productSchema),
-        defaultValues: { name: "", price: 0, description: "", category: "" }
-    });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const brandRes = await getBrand();
+        const subRes = await getSubCategories();
 
-    useEffect(() => {
-        if (isEdit) {
-            api.getProductById(+id!).then((res) => reset(res.data));
-        }
-    }, [id]);
-
-    const onSubmit = async (data: productType) => {
-        if (isEdit) {
-            await api.updateProduct(+id!, data);
-        } else {
-            await api.createProduct(data);
-        }
-        navigate("/admin/products");
+        setBrands(Array.isArray(brandRes.data?.data) ? brandRes.data.data : []);
+        setSubCategories(Array.isArray(subRes.data?.data) ? subRes.data.data : []);
+      } catch (err) {
+  toast.error("Tạo sản phẩm thất bại");
+        console.error("Lỗi khi lấy brand hoặc subCategory:", err , err.response);
+      }
     };
 
-    return (
-        <Container className="mt-4">
-            <Row className="justify-content-center">
-                <Col md={8}>
-                    <h3>{isEdit ? "Cập nhật sản phẩm" : "Thêm sản phẩm mới"}</h3>
-                    <Form onSubmit={handleSubmit(onSubmit)}>
+    fetchData();
+  }, []);
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Tên sản phẩm</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Nhập tên sản phẩm"
-                                {...register("name")}
-                                isInvalid={!!errors.name}
-                            />
-                            <Form.Control.Feedback type="invalid">
-                                {errors.name?.message}
-                            </Form.Control.Feedback>
-                        </Form.Group>
+  // Cập nhật slug mỗi khi title thay đổi
+  useEffect(() => {
+    const generatedSlug = slugify(title, { lower: true, strict: true });
+    setSlug(generatedSlug);
+    setValue("slug", generatedSlug); // cập nhật vào form
+    setValue("title", title, { shouldValidate: true });
+  }, [title, setValue]);
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Giá</Form.Label>
-                            <Form.Control
-                                type="number"
-                                placeholder="Nhập giá"
-                                {...register("price", { valueAsNumber: true })}
-                                isInvalid={!!errors.price}
-                            />
-                            <Form.Control.Feedback type="invalid">
-                                {errors.price?.message}
-                            </Form.Control.Feedback>
-                        </Form.Group>
+  const onSubmit = async (data: any) => {
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("shortDescription", data.shortDescription || "");
+    formData.append("slug", data.slug);
+    formData.append("priceDefault", data.priceDefault);
+    formData.append("brand", data.brand);
+    formData.append("subCategory", data.subCategory);
+    formData.append("seoTitle", data.seoTitle || "");
+    formData.append("seoDescription", data.seoDescription || "");
+    formData.append("tags", JSON.stringify(data.tags || []));
+    formData.append("specifications", JSON.stringify(data.specifications || {}));
+    formData.append("variants", JSON.stringify(data.variants || []));
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Danh mục</Form.Label>
-                            <Form.Select {...register("category")}>
-                                {categories.map((c) => (
-                                    <option key={c} value={c}>{c}</option>
-                                ))}
-                            </Form.Select>
-                        </Form.Group>
+    if (data.thumbnail && data.thumbnail[0]) {
+      formData.append("thumbnail", data.thumbnail[0]);
+    }
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Mô tả</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={3}
-                                placeholder="Mô tả sản phẩm"
-                                {...register("description")}
-                            />
-                        </Form.Group>
+    try {
+      await createProduct(formData);
+      navigate("/admin/products");
+    } catch (err) {
+      console.error("Lỗi khi tạo sản phẩm:", err);
+    }
+  };
 
-                        <Button variant="primary" type="submit">
-                            {isEdit ? "Cập nhật" : "Thêm mới"}
-                        </Button>
-                    </Form>
-                </Col>
-            </Row>
-        </Container>
-    );
-};
+  return (
+    <Form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+      <Form.Group className="mb-3">
+        <Form.Label>Tên sản phẩm</Form.Label>
 
-export default ProductFormAdd;
+        <Form.Control
+          value={title}
+          onChange={(e) => {
+            setTitle(e.target.value);
+            setValue("title", e.target.value, { shouldValidate: true });
+          }}
+        />
+        {errors.title && <Form.Text className="text-danger">{errors.title.message}</Form.Text>}
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Slug</Form.Label>
+        <Form.Control
+          value={slug}
+          {...register("slug", { required: "Slug là bắt buộc" })}
+          readOnly
+          placeholder="Slug sẽ được tạo tự động từ tiêu đề"
+        />
+        {errors.slug && <p className="text-danger">{errors.slug.message}</p>}
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Mô tả ngắn</Form.Label>
+        <Form.Control as="textarea" {...register("shortDescription")} />
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Mô tả đầy đủ</Form.Label>
+        <Form.Control as="textarea" rows={5} {...register("description")} />
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Giá</Form.Label>
+        <Form.Control type="number" {...register("priceDefault", { required: true })} />
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Ảnh thumbnail</Form.Label>
+        <Form.Control type="file" accept="image/*" {...register("thumbnail", { required: true })} />
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Thương hiệu</Form.Label>
+        <Form.Select {...register("brand", { required: true })}>
+          <option value="">-- Chọn thương hiệu --</option>
+          {brands.map((b: any) => (
+            <option key={b._id} value={b._id}>
+              {b.title}
+            </option>
+          ))}
+        </Form.Select>
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Danh mục con</Form.Label>
+        <Form.Select {...register("subCategory", { required: true })}>
+          <option value="">-- Chọn danh mục con --</option>
+          {subCategories.map((s: any) => (
+            <option key={s._id} value={s._id}>
+              {s.title}
+            </option>
+          ))}
+        </Form.Select>
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>SEO Title</Form.Label>
+        <Form.Control {...register("seoTitle")} />
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>SEO Description</Form.Label>
+        <Form.Control as="textarea" {...register("seoDescription")} />
+      </Form.Group>
+
+      <Button type="submit">Tạo sản phẩm</Button>
+    </Form>
+  );
+}

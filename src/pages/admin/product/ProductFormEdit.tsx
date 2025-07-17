@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { productSchema } from "../../validations/productSchema";
-import * as api from "../../api/productApi";
+import { productSchema } from "../../../validations/productSchema";
+import * as api from "../../../api/productApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { Col, Container, Row, Form, Button } from "react-bootstrap";
-import type { productType } from "../../types/productType";
-
+import type { ProductType } from "../../../types/productType";
 
 const ProductFormEdit = () => {
     const { id } = useParams();
@@ -34,7 +33,7 @@ const ProductFormEdit = () => {
         }
     }, [id]);
 
-    const onSubmit = async (data: productType) => {
+    const onSubmit = async (data: ProductType) => {
         if (isEdit) {
             await api.updateProduct(+id!, data);
         } else {

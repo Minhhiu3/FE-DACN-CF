@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import * as api from "../api/productApi";
 import { getErrMes } from "../helpers/errorHandler";
-import type { productType } from "../types/productType";
+import type { ProductType } from "../types/productType";
 export const useProductList = () => {
-    const [products, setProducts] = useState<productType[]>([]);
+    const [products, setProducts] = useState<ProductType[]>([]);
     const [loading, setLoading] = useState(false);
 
     const fetchProducts = async () => {
@@ -11,7 +11,7 @@ export const useProductList = () => {
         try {
             setLoading(true);
             const res = await api.getProducts();
-            setProducts(res.data);
+            setProducts(res.data.data);
         } catch (error) {
             getErrMes(`loi goi api ${error}`);
         } finally {
@@ -20,7 +20,7 @@ export const useProductList = () => {
 
     };
 
-    const removeProduct = async (id: number) => {
+    const removeProduct = async (id: string) => {
         try {
             await api.deleteProduct(id);
             fetchProducts(); // Refresh list

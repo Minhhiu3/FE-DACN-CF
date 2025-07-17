@@ -3,6 +3,7 @@ import { createCategory } from "../../../api/categoryApi";
 import type { CategoryType } from "../../../types/categoryType";
 import slugify from "slugify";
 import { toast } from "react-toastify";
+import type { AxiosError } from "axios";
 
 export default function CategoryFormAdd({ onSuccess }: { onSuccess: () => void }) {
   const [form, setForm] = useState<CategoryType>({
@@ -36,13 +37,19 @@ export default function CategoryFormAdd({ onSuccess }: { onSuccess: () => void }
       toast.success("✅ Thêm danh mục thành công!");
       setForm({ title: "", slug: "", description: "" });
       onSuccess();
-    } catch (err: any) {
-      if (err.response?.status === 400) {
-        setError(err.response.data?.message || "Dữ liệu không hợp lệ");
-      } else {
-        setError("❌ Có lỗi xảy ra khi gửi dữ liệu.");
-      }
-    }
+    } catch (err: unknown) {
+            const axiosError = err as AxiosError
+            // console.log(on);
+            
+            console.log(axiosError)
+          if (axiosError.response?.status === 400) {
+            setError(
+              (axiosError.response?.data as { message?: string })?.message || "Dữ liệu không hợp lệ"
+            );
+          } else {
+            setError("❌ Có lỗi xảy ra khi gửi dữ liệu.");
+          }
+        }
   };
 
   return (

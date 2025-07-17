@@ -13,8 +13,10 @@ const menuItems = [
     { label: "Users", icon: <FiUsers />, path: "users" },
     { label: "Products", icon: <FiBox />, path: "products" },
     { label: "Categories", icon: <FiList />, path: "categories" },
+    { label: "Sub-Categories", icon: <FiList />, path: "sub-categories" },
     { label: "Orders", icon: <FiShoppingCart />, path: "orders" },
-    { label: "Settings", icon: <FiSettings />, path: "setting" },
+    { label: "Brands", icon: <FiSettings />, path: "brands" },
+    
 ];
 
 const SiderBarAdmin: React.FC<SiderBarAdminProps> = ({ collapsed, onToggle }) => {
