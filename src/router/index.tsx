@@ -10,6 +10,7 @@ import RegisterPage from '../pages/common/RegisterPage';
 //protected
 import ProtectedRoute from './ProtectedRoute';
 import LoginPage from '../pages/common/LoginPage';
+import UserProfile from '../pages/common/UserInfo';
 export const router = createBrowserRouter([
     {
         path: '/',
@@ -35,7 +36,6 @@ export const router = createBrowserRouter([
     //emty layout
     { path: '/register', element: <RegisterPage />, },
     { path: '/login', element: <LoginPage /> },
+    { path: '/user-profile', element: <UserProfile /> },
     { path: '*', element: <Navigate to="/" replace /> }
-
-
 ]);

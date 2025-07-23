@@ -4,7 +4,7 @@ export type LoginData = {
 }
 export type RegisterData = {
     id?: number;
-    name: string;
+    fullName: string;
     email: string;
     password: string;
     confirmPassword: string

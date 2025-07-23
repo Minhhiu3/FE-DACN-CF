@@ -1,15 +1,23 @@
+// validations/authSchema.ts
 import { z } from "zod";
-export const loginSchema = z.object({
-    email: z.string().email({ message: "Email không hợp lệ" }).min(6, "Email phải có ít nhất 6 ký tự"),
-    password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự").max(20, "Mật khẩu không được quá 20 ký tự"),
+import MESSAGES from "../../src/Message.tsx";
 
-})
-export const registerSchema = z.object({
-    name: z.string().min(2, "Tên phải có ít nhất 2 ký tự").max(50, "Tên không được quá 50 ký tự"),
-    email: z.string().email({ message: "Email không hợp lệ" }),
-    password: z.string().min(6, "phải có ít nhất 6 ký tự").max(20, "Mật khẩu không được quá 20 ký tự"),
-    confirmPassword: z.string().min(6, "phải có ít nhất 6 ký tự").max(20, " mật khẩu không được quá 20 ký tự"),
-}).refine((data) => data.password === data.confirmPassword, {
-    message: " mật khẩu không khớp",
+export const registerSchema = z
+  .object({
+    fullName: z.string().min(1, MESSAGES.USER.FULLNAME_REQUIRED),
+    email: z.string().email(MESSAGES.EMAIL.EMAIL_INVALID),
+    password: z
+      .string()
+      .min(6, MESSAGES.PASSWORD.PASSWORD_TOSHORT)
+      .max(20, MESSAGES.PASSWORD.PASSWORD_TOLONG),
+    confirmPassword: z.string(),
+    phoneNumber: z.string().optional(),
+    address: z.string().optional(),
+    bios: z.string().optional(),
+    avatar: z.string().optional(),
+    role: z.enum(["guest", "user", "admin"]).optional().default("guest"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Mật khẩu xác nhận không khớp",
     path: ["confirmPassword"],
-});
+  });
